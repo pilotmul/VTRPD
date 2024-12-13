@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit Codes</title>
+    <script>
+        async function submitCode(event) {
+            event.preventDefault(); // Forhindrer standardformular-opførsel
+            const codeInput = document.getElementById('code');
+            const code = codeInput.value; // Hent koden fra inputfeltet
+
+            // Send POST-forespørgsel til serveren
+            try {
+                const response = await fetch('/submit-code/', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}' // Tilføj CSRF-token
+                    },
+                    body: JSON.stringify({ code: code }) // Send koden som JSON
+                });
+
+                const data = await response.json();
+
+                // Vis beskeden på siden
+                const resultDiv = document.getElementById('result');
+                if (response.ok) {
+                    resultDiv.innerHTML = `<p>${data.message}</p>`;
+                } else {
+                    resultDiv.innerHTML = `<p style="color: red;">${data.error}</p>`;
+                }
+
+                // Ryd inputfeltet
+                codeInput.value = '';
+            } catch (error) {
+                console.error('Fejl:', error);
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = `<p style="color: red;">Noget gik galt. Prøv igen senere.</p>`;
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Indtast kode</h1>
+    <form onsubmit="submitCode(event)">
+        <input type="text" id="code" placeholder="Indtast kode" required>
+        <button type="submit">Send</button>
+    </form>
+    <div id="result"></div>
+</body>
+</html>

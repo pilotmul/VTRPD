@@ -21,3 +21,11 @@ Thumbs.db
 *.po
 *.mo
 /locale/
+
+*/migrations/*.py
+!*/migrations/__init__.py
+
+*.log
+*.out
+*.err
+.idea/
